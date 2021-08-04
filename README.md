@@ -6,12 +6,26 @@ The protocols of data pre-processing are as follows:
 2) Trim reads which contain N nucleotides over certain threshold (10 bp by default)
 3) Trim reads which overlap with adatper over certain threshold(15 bp by default)
 4) If the target community is associated with a host, soap2.21 was used to minimalize host DNA.
-## 2. Metagenome Assemblyed
+
+```shell
+soap_remove_host.sh
+QC.sh
+```
+
+
+## 2. Metagenome Assembly
 1) Samples passing QC were assembled initially using an optimized SOAPdenovo protocol for Gut, or MEGAHIT for soil and Water (K-mer=55)
 2) The scaffolds were cut off at "N" to get fragments without "N", called Scaftigs(i.e., coninuous sequences within scaffolds)
 3) Clean data of all samples were mapped to assembled Scaftigs using Soap 2.21 and unutilized PE reads were collect.
 4) Mixed assembly was conducted on the unutlized reads with the same assemble parameter.
 5) The scaftigs of each sample and mixed assembled, which were less than 500 bp, were trimmed. And the effective Scaftigs were used of further analysis and gene prediction.
+```shell
+SOAPdenovo_Gut.sh
+MEGAHIT_soil_water.sh
+
+```
+soapdenovo 70G
+MEGAHIT 140G
 ## 3. Gene Predication
 ### 3.1 Introduction of gene prediction and abundance analysis
 1) Scaftigs (>=500bp) were used for ORF (Open Reading Frame) predication by MetaGeneMark. The ORFs less than 100nt were trimmed.
@@ -19,9 +33,18 @@ The protocols of data pre-processing are as follows:
 3) Clean data were mapped to gene catalogue using SoapAligner to calculate the quantity. Paramenter: -m 200, -x 400, identity >= 95%
 4) The gene abundance was calculated based on the total number of mapped reads and gene length. Computational formula was as follows:
 5) Downstream analyses were performed based on the abundance of gene catalogues.
+```shell
+metagenemark.sh # gene predication
+cdhit.sh # gene catlogues generation 
+SoapAligner.sh # quantification of clean data mapped to gene catalogue
+gene_abundance.sh # Gene abundance calculation.
+```
 ### 3.2 Gene catalogue statistics
 ### 3.3 Core-pan genome analysis
 Based on the gene abundance table, rarefaction curves were plotted with the number of core-genes and pan-genes separtely by randomly drawing sampling, the figures were shown as follows:
+```R
+Rscript Core_Pan.R --input --output
+```
 ### 3.4 Gene number analysis
 To investigate the difference of gene number among groups, the gene number of different groups was shown as follows in box chart.
 To investigate the number of the common and peculiar genes among specified samples (groups), Venn figures were drawn as follows.
